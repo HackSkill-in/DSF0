@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Science Fundamentals – Module 0 | HackSkill</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --off-white: #f7f6f2;
+    --cream: #faf9f5;
+    --ink: #1a1a2e;
+    --ink-light: #3d3d5c;
+    --muted: #8888aa;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --blue-mid: #93c5fd;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --purple: #7c3aed;
+    --purple-light: #ede9fe;
+    --border: #e5e4ef;
+    --shadow: 0 4px 24px rgba(26,26,46,0.08);
+    --shadow-lg: 0 12px 48px rgba(26,26,46,0.14);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Slide container ── */
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    background: var(--white);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.45s cubic-bezier(.4,0,.2,1), transform 0.45s cubic-bezier(.4,0,.2,1);
+    transform: translateY(18px);
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1; pointer-events: all; transform: translateY(0);
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 36px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+  .topbar-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px; color: var(--blue); letter-spacing: -0.3px;
+  }
+  .topbar-brand span { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); }
+  .slide-counter { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; }
+
+  /* ── Progress bar ── */
+  .progress-track { height: 3px; background: var(--border); width: 100%; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--teal)); transition: width 0.4s ease; }
+
+  /* ── Main content area ── */
+  .slide-body { flex: 1; display: flex; flex-direction: column; padding: 40px 60px; overflow: hidden; }
+  .slide-body.center { align-items: center; justify-content: center; text-align: center; }
+  .slide-body.split { flex-direction: row; gap: 48px; align-items: stretch; }
+
+  /* ── Typography ── */
+  .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ''; display: block; width: 24px; height: 2px; background: var(--blue); }
+
+  h1.slide-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 4vw, 52px); color: var(--ink); line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 20px;
+  }
+  h1.slide-title em { color: var(--blue); font-style: italic; }
+
+  h2.section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(26px, 3vw, 38px); color: var(--ink); line-height: 1.2;
+    letter-spacing: -0.5px; margin-bottom: 28px;
+  }
+  h2.section-title em { color: var(--teal); font-style: italic; }
+
+  .lead { font-size: 18px; color: var(--ink-light); line-height: 1.65; max-width: 680px; }
+  .body-text { font-size: 15px; color: var(--ink-light); line-height: 1.7; }
+  .caption { font-size: 13px; color: var(--muted); }
+
+  /* ── Cards & chips ── */
+  .card {
+    background: var(--off-white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 28px;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow); }
+  .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 600;
+  }
+  .chip.blue { background: var(--blue-light); color: var(--blue); }
+  .chip.teal { background: var(--teal-light); color: var(--teal); }
+  .chip.amber { background: var(--amber-light); color: var(--amber); }
+  .chip.purple { background: var(--purple-light); color: var(--purple); }
+  .chip.green { background: var(--green-light); color: var(--green); }
+  .chip.red { background: var(--red-light); color: var(--red); }
+
+  /* ── Code block ── */
+  .code-block {
+    background: #1e1e2e; border-radius: 12px; padding: 24px 28px;
+    font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.8;
+    color: #cdd6f4; overflow-x: auto;
+  }
+  .code-block .kw { color: #cba6f7; }
+  .code-block .fn { color: #89b4fa; }
+  .code-block .st { color: #a6e3a1; }
+  .code-block .cm { color: #6c7086; font-style: italic; }
+  .code-block .nm { color: #fab387; }
+  .code-block .op { color: #89dceb; }
+  .code-block .prompt { color: #6c7086; }
+
+  /* ── Grid layouts ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  /* ── Module pill list ── */
+  .module-list { display: flex; flex-direction: column; gap: 10px; }
+  .module-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 20px; border-radius: 10px;
+    background: var(--off-white); border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .module-item:hover { background: var(--blue-light); border-color: var(--blue-mid); }
+  .module-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .module-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .module-sub { font-size: 12px; color: var(--muted); }
+  .module-dur { margin-left: auto; font-size: 12px; color: var(--teal); font-weight: 600; }
+
+  /* ── Stat box ── */
+  .stat-box { text-align: center; }
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--blue); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--muted); font-weight: 500; margin-top: 6px; }
+
+  /* ── Timeline ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 20px; padding-bottom: 22px; position: relative; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-left { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--blue); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; z-index: 1;
+  }
+  .tl-line { width: 2px; flex: 1; background: var(--border); margin-top: 4px; }
+  .tl-item:last-child .tl-line { display: none; }
+  .tl-content { padding-top: 6px; flex: 1; }
+  .tl-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+
+  /* ── Python type card ── */
+  .type-card {
+    border-radius: 12px; padding: 18px 20px;
+    border: 1px solid; position: relative; overflow: hidden;
+  }
+  .type-card::before {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    opacity: 0.1;
+  }
+  .type-name { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .type-example { font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 8px; }
+  .type-desc { font-size: 12px; line-height: 1.5; }
+
+  /* ── Highlight box ── */
+  .highlight-box {
+    border-left: 4px solid var(--blue); background: var(--blue-light);
+    border-radius: 0 10px 10px 0; padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .highlight-box.teal { border-color: var(--teal); background: var(--teal-light); }
+  .highlight-box.amber { border-color: var(--amber); background: var(--amber-light); }
+  .highlight-box.purple { border-color: var(--purple); background: var(--purple-light); }
+
+  /* ── Cover slide special ── */
+  .cover-slide { background: var(--white); }
+  .cover-slide .slide-body { padding: 0; }
+  .cover-left {
+    flex: 1; padding: 60px 56px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .cover-right {
+    width: 340px; background: linear-gradient(160deg, var(--blue) 0%, #1e3a8a 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px; position: relative; overflow: hidden;
+  }
+  .cover-right::before {
+    content: '';position: absolute;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    top: -80px; right: -80px;
+  }
+  .cover-right::after {
+    content: '';position: absolute;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    bottom: -40px; left: -40px;
+  }
+
+  .hackskill-logo {
+    font-family: 'DM Serif Display', serif; font-size: 22px;
+    color: white; text-align: center; margin-bottom: 32px; z-index: 1;
+  }
+  .hackskill-logo span { display: block; font-family: 'DM Sans'; font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.6); text-transform: uppercase; margin-top: 4px; }
+
+  .cover-badge {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px; padding: 20px; text-align: center; z-index: 1; width: 100%;
+    backdrop-filter: blur(10px);
+  }
+  .cover-badge-title { color: rgba(255,255,255,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .cover-badge-val { color: white; font-size: 18px; font-weight: 700; }
+
+  /* ── Profile slide ── */
+  .profile-avatar {
+    width: 100px; height: 100px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px; margin-bottom: 20px; flex-shrink: 0;
+  }
+  .credential-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: var(--off-white); border-radius: 10px; border: 1px solid var(--border);
+  }
+  .cred-icon { font-size: 22px; }
+  .cred-text { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .cred-sub { font-size: 12px; color: var(--muted); }
+
+  /* ── Nav controls ── */
+  .nav-controls {
+    position: fixed; bottom: 28px; right: 36px;
+    display: flex; align-items: center; gap: 10px; z-index: 100;
+  }
+  .nav-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--white); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px; color: var(--ink);
+    box-shadow: var(--shadow); transition: all 0.2s;
+  }
+  .nav-btn:hover { background: var(--blue); color: white; border-color: var(--blue); transform: scale(1.08); }
+  .nav-btn:active { transform: scale(0.96); }
+
+  .nav-hint {
+    position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: rgba(255,255,255,0.4);
+    font-family: 'DM Sans'; letter-spacing: 0.5px;
+  }
+
+  /* ── Tool icons grid ── */
+  .tool-card {
+    border-radius: 14px; border: 1px solid var(--border);
+    padding: 22px 20px; text-align: center;
+    transition: all 0.2s; background: var(--white);
+  }
+  .tool-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .tool-icon { font-size: 36px; margin-bottom: 10px; }
+  .tool-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .tool-desc { font-size: 11px; color: var(--muted); }
+
+  /* ── Colab diagram ── */
+  .colab-ui {
+    background: #fff; border: 2px solid var(--border); border-radius: 12px;
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .colab-toolbar {
+    background: #f8f9fa; border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .colab-menu { display: flex; gap: 16px; }
+  .colab-menu-item { font-size: 13px; color: var(--ink-light); cursor: pointer; }
+  .colab-cell {
+    margin: 12px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+  }
+  .colab-cell-bar {
+    padding: 8px 14px; font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .colab-cell-bar.code-bar { background: #f0f4ff; color: var(--blue); }
+  .colab-cell-bar.text-bar { background: #f0fdf4; color: var(--green); }
+  .colab-cell-content { padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink); }
+
+  /* ── Checkmark list ── */
+  .check-list { display: flex; flex-direction: column; gap: 12px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; }
+  .check-icon { width: 22px; height: 22px; border-radius: 6px; background: var(--green-light); color: var(--green); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+  .check-text { font-size: 15px; color: var(--ink-light); line-height: 1.5; }
+  .check-text strong { color: var(--ink); }
+
+  /* ── DS lifecycle ── */
+  .lifecycle { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; }
+  .lc-step {
+    flex: 1; text-align: center; padding: 16px 8px;
+    border-radius: 12px; position: relative;
+  }
+  .lc-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
+  .lc-icon { font-size: 28px; margin-bottom: 8px; }
+  .lc-name { font-size: 11px; font-weight: 700; color: var(--ink); letter-spacing: 0.5px; }
+  .lc-mod { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+  /* ── Import card ── */
+  .import-card {
+    border-radius: 14px; padding: 22px 24px; border: 2px solid;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .import-emoji { font-size: 32px; flex-shrink: 0; }
+  .import-alias { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+  .import-full { font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: 8px; }
+  .import-desc { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
+
+  /* ── Thank you slide ── */
+  .thanks-slide { background: linear-gradient(160deg, #f0f6ff 0%, #f0fdf9 100%); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active .animated { animation: fadeUp 0.5s ease forwards; }
+  .slide.active .animated:nth-child(1) { animation-delay: 0.05s; }
+  .slide.active .animated:nth-child(2) { animation-delay: 0.15s; }
+  .slide.active .animated:nth-child(3) { animation-delay: 0.25s; }
+  .slide.active .animated:nth-child(4) { animation-delay: 0.35s; }
+  .slide.active .animated:nth-child(5) { animation-delay: 0.42s; }
+  .slide.active .animated:nth-child(6) { animation-delay: 0.49s; }
+  .slide.active .animated { opacity: 0; }
+
+  /* scrollbar inside slides */
+  .scroll-inner { overflow-y: auto; flex: 1; }
+  .scroll-inner::-webkit-scrollbar { width: 4px; }
+  .scroll-inner::-webkit-scrollbar-track { background: transparent; }
+  .scroll-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════════ SLIDE 1 – COVER ══════════════ -->
+  <div class="slide cover-slide active">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">01 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:6.25%"></div></div>
+    <div class="slide-body split" style="padding:0">
+      <div class="cover-left">
+        <div class="eyebrow animated">Module 0 · Workshop Kickoff</div>
+        <h1 class="slide-title animated">Getting Started with<br><em>Data Science</em></h1>
+        <p class="lead animated">Python fundamentals, Google Colab setup, and your first steps into the world of data — all in one place.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px" class="animated">
+          <div class="chip blue">🐍 Python</div>
+          <div class="chip teal">☁️ Google Colab</div>
+          <div class="chip amber">📊 Data Science</div>
+          <div class="chip green">🆓 Free Workshop</div>
+        </div>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);display:flex;gap:32px" class="animated">
+          <div class="stat-box"><div class="stat-num">15</div><div class="stat-label">Day Workshop</div></div>
+          <div class="stat-box"><div class="stat-num">7</div><div class="stat-label">Modules</div></div>
+          <div class="stat-box"><div class="stat-num">0₹</div><div class="stat-label">Cost</div></div>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="hackskill-logo">
+          ⚡ HackSkill<span>hackskill.in</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;width:100%;z-index:1">
+          <div class="cover-badge">
+            <div class="cover-badge-title">Instructor</div>
+            <div class="cover-badge-val">Devansh Singh</div>
+          </div>
+          <div class="cover-badge">
+            <div class="cover-badge-title">Dates</div>
+            <div class="cover-badge-val">23 Mar – 7 Apr 2025</div>
+          </div>
+          <div class="cover-badge">
+            <div class="cover-badge-title">Mode</div>
+            <div class="cover-badge-val">Self-Paced · Online</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 2 – ABOUT HACKSKILL ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">02 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:12.5%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="eyebrow animated">About the Organiser</div>
+        <h2 class="section-title animated">Who is <em>HackSkill?</em></h2>
+        <p class="body-text animated" style="margin-bottom:20px">HackSkill is a community-driven tech education platform at <strong>hackskill.in</strong> — built to make high-quality, industry-relevant tech education accessible to every learner, regardless of their background or budget.</p>
+        <div class="check-list animated">
+          <div class="check-item"><div class="check-icon">🎯</div><div class="check-text"><strong>Mission:</strong> Bridge the gap between academic learning and industry expectations</div></div>
+          <div class="check-item"><div class="check-icon">🌍</div><div class="check-text"><strong>Community:</strong> Thousands of learners across India learning tech skills that actually get you hired</div></div>
+          <div class="check-item"><div class="check-icon">📜</div><div class="check-text"><strong>Certifications:</strong> Industry-recognised certificates with every workshop</div></div>
+          <div class="check-item"><div class="check-icon">💡</div><div class="check-text"><strong>Approach:</strong> Hands-on projects, real datasets, placement-focused curriculum</div></div>
+        </div>
+      </div>
+      <div style="width:260px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+        <div class="card animated" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div style="font-size:32px;margin-bottom:10px">⚡</div>
+          <div class="card-title" style="color:var(--blue)">HackSkill</div>
+          <div style="font-size:24px;font-family:'DM Serif Display',serif;color:var(--ink)">hackskill.in</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:6px">Your tech learning partner</div>
+        </div>
+        <div class="card animated">
+          <div class="card-title" style="color:var(--teal)">This Workshop</div>
+          <div style="font-size:14px;color:var(--ink-light);line-height:1.6">
+            🗓 23 March – 7 April<br>
+            ⏱ 15 Days, Self-Paced<br>
+            📱 YouTube + Colab<br>
+            🎓 Free Certificate
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 3 – ABOUT DEVANSH ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">03 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:18.75%"></div></div>
+    <div class="slide-body split">
+      <div style="width:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+        <div class="profile-avatar animated">👨‍💻</div>
+        <div style="text-align:center" class="animated">
+          <div style="font-family:'DM Serif Display',serif;font-size:26px;color:var(--ink)">Devansh Singh</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:4px">ML Engineer & Educator</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%" class="animated">
+          <div class="chip blue" style="justify-content:center;padding:10px 16px">🤖 ML Engineer</div>
+          <div class="chip amber" style="justify-content:center;padding:10px 16px">☁️ Amazon ML Summer School</div>
+          <div class="chip teal" style="justify-content:center;padding:10px 16px">🏢 Infosys Intern</div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="eyebrow animated">Your Instructor</div>
+        <h2 class="section-title animated">Building <em>real skills</em><br>from real experience</h2>
+        <div style="display:flex;flex-direction:column;gap:12px" class="animated">
+          <div class="credential-item">
+            <div class="cred-icon">🏅</div>
+            <div><div class="cred-text">Amazon ML Summer School — Certified</div><div class="cred-sub">One of India's most competitive ML programs</div></div>
+          </div>
+          <div class="credential-item">
+            <div class="cred-icon">🏢</div>
+            <div><div class="cred-text">Infosys — ML Intern</div><div class="cred-sub">Working on real-world ML systems at scale</div></div>
+          </div>
+          <div class="credential-item">
+            <div class="cred-icon">🎓</div>
+            <div><div class="cred-text">Data Science Educator</div><div class="cred-sub">Teaching the skills that helped me break in</div></div>
+          </div>
+        </div>
+        <div class="highlight-box animated" style="margin-top:20px">
+          <div style="font-size:14px;color:var(--blue-800,#1e40af);line-height:1.6">
+            <strong>My promise to you:</strong> Everything I teach in this workshop is what I actually use professionally. No fluff, no theory for theory's sake — just the real tools of the trade.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 4 – WORKSHOP OVERVIEW ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">04 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:25%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1">
+        <div class="eyebrow animated">The Full Roadmap</div>
+        <h2 class="section-title animated">What we'll <em>cover together</em></h2>
+        <div class="module-list scroll-inner animated">
+          <div class="module-item" style="background:var(--blue-light);border-color:var(--blue-mid)">
+            <div class="module-num" style="background:var(--blue)">0</div>
+            <div><div class="module-name">Getting Started – Colab & Python</div><div class="module-sub">Setup, Python basics, first imports</div></div>
+            <div class="module-dur">Today</div>
+          </div>
+          <div class="module-item"><div class="module-num">1</div><div><div class="module-name">NumPy – Numerical Computing</div><div class="module-sub">Arrays, broadcasting, math operations</div></div><div class="module-dur">~60 min</div></div>
+          <div class="module-item"><div class="module-num">2</div><div><div class="module-name">Pandas – Data Manipulation</div><div class="module-sub">DataFrames, groupby, merging</div></div><div class="module-dur">~90 min</div></div>
+          <div class="module-item"><div class="module-num">3</div><div><div class="module-name">Data Cleaning & Preprocessing</div><div class="module-sub">Nulls, outliers, feature engineering</div></div><div class="module-dur">~90 min</div></div>
+          <div class="module-item"><div class="module-num">4</div><div><div class="module-name">Visualization – Matplotlib & Seaborn</div><div class="module-sub">Charts that tell stories</div></div><div class="module-dur">~75 min</div></div>
+          <div class="module-item"><div class="module-num">5</div><div><div class="module-name">Statistics for Data Science</div><div class="module-sub">Distributions, hypothesis testing</div></div><div class="module-dur">~75 min</div></div>
+          <div class="module-item"><div class="module-num">6</div><div><div class="module-name">Intro to Machine Learning</div><div class="module-sub">Your first ML model end-to-end</div></div><div class="module-dur">~75 min</div></div>
+        </div>
+      </div>
+      <div style="width:240px;display:flex;flex-direction:column;justify-content:center;gap:16px">
+        <div class="card animated" style="text-align:center">
+          <div class="stat-num">15</div><div class="stat-label">Days of Learning</div>
+        </div>
+        <div class="card animated" style="text-align:center">
+          <div class="stat-num">7</div><div class="stat-label">Modules</div>
+        </div>
+        <div class="card animated" style="text-align:center">
+          <div class="stat-num">11</div><div class="stat-label">YouTube Videos</div>
+        </div>
+        <div class="card animated" style="background:var(--green-light);border-color:#86efac;text-align:center">
+          <div style="font-size:28px;margin-bottom:6px">🎓</div>
+          <div style="font-size:13px;font-weight:700;color:var(--green)">FREE Certificate on Completion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 5 – WHAT IS DATA SCIENCE ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">05 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:31.25%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Foundations</div>
+      <h2 class="section-title animated">What <em>exactly</em> is Data Science?</h2>
+      <div class="grid-3 animated" style="margin-bottom:24px">
+        <div class="card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div style="font-size:28px;margin-bottom:10px">📊</div>
+          <div class="card-title" style="color:var(--blue)">Statistics</div>
+          <div class="body-text">Understand patterns, distributions, and probability in data</div>
+        </div>
+        <div class="card" style="background:var(--teal-light);border-color:#5eead4">
+          <div style="font-size:28px;margin-bottom:10px">💻</div>
+          <div class="card-title" style="color:var(--teal)">Programming</div>
+          <div class="body-text">Use Python to clean, transform, and model data efficiently</div>
+        </div>
+        <div class="card" style="background:var(--amber-light);border-color:#fcd34d">
+          <div style="font-size:28px;margin-bottom:10px">🏢</div>
+          <div class="card-title" style="color:var(--amber)">Domain Knowledge</div>
+          <div class="body-text">Understand the business problem you are solving</div>
+        </div>
+      </div>
+      <div class="animated" style="background:var(--off-white);border-radius:14px;padding:20px 24px;border:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:0.5px">THE DATA SCIENCE LIFECYCLE</div>
+        <div class="lifecycle">
+          <div class="lc-step" style="background:var(--blue-light)"><div class="lc-icon">🗂️</div><div class="lc-name">COLLECT</div><div class="lc-mod">Module 0</div></div>
+          <div class="lc-arrow">→</div>
+          <div class="lc-step" style="background:var(--teal-light)"><div class="lc-icon">🧹</div><div class="lc-name">CLEAN</div><div class="lc-mod">Module 3</div></div>
+          <div class="lc-arrow">→</div>
+          <div class="lc-step" style="background:var(--purple-light)"><div class="lc-icon">🔍</div><div class="lc-name">EXPLORE</div><div class="lc-mod">Module 2+4</div></div>
+          <div class="lc-arrow">→</div>
+          <div class="lc-step" style="background:var(--amber-light)"><div class="lc-icon">📐</div><div class="lc-name">MODEL</div><div class="lc-mod">Module 5+6</div></div>
+          <div class="lc-arrow">→</div>
+          <div class="lc-step" style="background:var(--green-light)"><div class="lc-icon">💡</div><div class="lc-name">INSIGHTS</div><div class="lc-mod">All Modules</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 6 – TOOLS ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">06 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:37.5%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Tech Stack</div>
+      <h2 class="section-title animated">Our <em>complete toolkit</em> for this workshop</h2>
+      <div class="grid-4 animated">
+        <div class="tool-card"><div class="tool-icon">🐍</div><div class="tool-name">Python 3</div><div class="tool-desc">Our core language</div></div>
+        <div class="tool-card"><div class="tool-icon">☁️</div><div class="tool-name">Google Colab</div><div class="tool-desc">Free cloud notebooks</div></div>
+        <div class="tool-card"><div class="tool-icon">🔢</div><div class="tool-name">NumPy</div><div class="tool-desc">Numerical computing</div></div>
+        <div class="tool-card"><div class="tool-icon">🐼</div><div class="tool-name">Pandas</div><div class="tool-desc">Data manipulation</div></div>
+        <div class="tool-card"><div class="tool-icon">📈</div><div class="tool-name">Matplotlib</div><div class="tool-desc">Plotting & charts</div></div>
+        <div class="tool-card"><div class="tool-icon">🎨</div><div class="tool-name">Seaborn</div><div class="tool-desc">Statistical visuals</div></div>
+        <div class="tool-card"><div class="tool-icon">🤖</div><div class="tool-name">Scikit-learn</div><div class="tool-desc">Machine learning</div></div>
+        <div class="tool-card" style="background:var(--blue-light);border-color:var(--blue-mid)"><div class="tool-icon">📂</div><div class="tool-name">Kaggle</div><div class="tool-desc">Real-world datasets</div></div>
+      </div>
+      <div class="highlight-box animated" style="margin-top:24px">
+        <strong>Zero Installation Required.</strong> Everything runs in Google Colab — all you need is a Google account and a browser.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 7 – WHAT IS COLAB ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">07 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:43.75%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1">
+        <div class="eyebrow animated">Module 0 · Section 1</div>
+        <h2 class="section-title animated">Google Colab — <em>Your coding home</em></h2>
+        <div class="check-list animated">
+          <div class="check-item"><div class="check-icon">☁️</div><div class="check-text"><strong>Cloud-based:</strong> Runs entirely in your browser — no downloads</div></div>
+          <div class="check-item"><div class="check-icon">💾</div><div class="check-text"><strong>Google Drive integration:</strong> Your notebooks save automatically to Drive</div></div>
+          <div class="check-item"><div class="check-icon">🆓</div><div class="check-text"><strong>Free GPU/TPU access:</strong> Runtime → Change Runtime Type → GPU</div></div>
+          <div class="check-item"><div class="check-icon">🤝</div><div class="check-text"><strong>Shareable:</strong> Share a notebook link like you'd share a Google Doc</div></div>
+          <div class="check-item"><div class="check-icon">📦</div><div class="check-text"><strong>Pre-installed libraries:</strong> NumPy, Pandas, Matplotlib already available</div></div>
+        </div>
+        <div class="highlight-box teal animated" style="margin-top:20px">
+          <strong>Open it now:</strong> Go to <code style="font-family:'JetBrains Mono';font-size:13px">colab.research.google.com</code> and click <em>"New notebook"</em>
+        </div>
+      </div>
+      <div style="width:320px;display:flex;flex-direction:column;justify-content:center" class="animated">
+        <div class="colab-ui">
+          <div class="colab-toolbar">
+            <span style="font-size:13px;font-weight:700;color:var(--ink)">📓 Untitled.ipynb</span>
+            <div class="colab-menu">
+              <span class="colab-menu-item">File</span>
+              <span class="colab-menu-item">Edit</span>
+              <span class="colab-menu-item">Runtime</span>
+            </div>
+          </div>
+          <div class="colab-cell">
+            <div class="colab-cell-bar text-bar">✍️ Text Cell (Markdown)</div>
+            <div class="colab-cell-content" style="font-family:'DM Sans';color:var(--ink-light)"># Welcome to Data Science!</div>
+          </div>
+          <div class="colab-cell">
+            <div class="colab-cell-bar code-bar">▶ Code Cell (Python)</div>
+            <div class="colab-cell-content">
+              <span style="color:#7c3aed">print</span>(<span style="color:#16a34a">"Hello, Data Science!"</span>)<br>
+              <span style="color:#6c7086;font-style:italic"># Output below ↓</span><br>
+              <span style="color:#059669">Hello, Data Science!</span>
+            </div>
+          </div>
+          <div style="padding:10px 16px;display:flex;gap:8px">
+            <div class="chip teal" style="font-size:11px">Shift+Enter = Run</div>
+            <div class="chip blue" style="font-size:11px">Ctrl+M B = New cell</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 8 – PYTHON VARIABLES ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">08 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:50%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Python Basics · Part 1</div>
+      <h2 class="section-title animated">Variables & <em>Data Types</em></h2>
+      <div class="grid-2 animated" style="margin-bottom:20px;gap:16px">
+        <div class="type-card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div class="type-name" style="color:var(--blue)">int — Integer</div>
+          <div class="type-example" style="color:var(--muted)">age = 22</div>
+          <div class="type-desc">Whole numbers — no decimal point. Used for counts, indices, IDs.</div>
+        </div>
+        <div class="type-card" style="background:var(--teal-light);border-color:#5eead4">
+          <div class="type-name" style="color:var(--teal)">float — Decimal</div>
+          <div class="type-example" style="color:var(--muted)">score = 92.5</div>
+          <div class="type-desc">Numbers with decimals. Used for prices, percentages, measurements.</div>
+        </div>
+        <div class="type-card" style="background:var(--purple-light);border-color:#c4b5fd">
+          <div class="type-name" style="color:var(--purple)">str — String</div>
+          <div class="type-example" style="color:var(--muted)">name = "Devansh"</div>
+          <div class="type-desc">Text in quotes. Used for names, labels, categories.</div>
+        </div>
+        <div class="type-card" style="background:var(--amber-light);border-color:#fcd34d">
+          <div class="type-name" style="color:var(--amber)">bool — Boolean</div>
+          <div class="type-example" style="color:var(--muted)">is_active = True</div>
+          <div class="type-desc">True or False only. Used for flags, conditions, filters.</div>
+        </div>
+      </div>
+      <div class="code-block animated" style="font-size:13px">
+        <span class="cm"># Checking data types</span><br>
+        <span class="fn">print</span>(<span class="fn">type</span>(age))      <span class="cm"># &lt;class 'int'&gt;</span><br>
+        <span class="fn">print</span>(<span class="fn">type</span>(score))    <span class="cm"># &lt;class 'float'&gt;</span><br>
+        <span class="fn">print</span>(<span class="fn">type</span>(name))     <span class="cm"># &lt;class 'str'&gt;</span><br><br>
+        <span class="cm"># f-strings — clean way to mix text and variables</span><br>
+        <span class="fn">print</span>(<span class="st">f"My name is {name} and I scored {score}%"</span>)
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 9 – LISTS & DICTS ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">09 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:56.25%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1">
+        <div class="eyebrow animated">Python Basics · Part 2</div>
+        <h2 class="section-title animated"><em>Lists</em> &amp; Dictionaries</h2>
+        <div class="highlight-box animated">
+          <strong>List</strong> → An ordered collection of items (like a column in a spreadsheet)
+        </div>
+        <div class="code-block animated" style="margin:14px 0;font-size:13px">
+          scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">79</span>, <span class="nm">95</span>, <span class="nm">84</span>]<br>
+          <span class="fn">print</span>(scores[<span class="nm">0</span>])        <span class="cm"># 88  (first item)</span><br>
+          <span class="fn">print</span>(scores[-<span class="nm">1</span>])       <span class="cm"># 84  (last item)</span><br>
+          <span class="fn">print</span>(scores[<span class="nm">1</span>:<span class="nm">3</span>])      <span class="cm"># [92, 79]</span><br>
+          <span class="fn">print</span>(<span class="fn">len</span>(scores))      <span class="cm"># 5</span><br>
+          scores.append(<span class="nm">91</span>)       <span class="cm"># add item</span>
+        </div>
+        <div class="highlight-box teal animated">
+          <strong>Dictionary</strong> → Key-value pairs (like a row in a spreadsheet with column names)
+        </div>
+        <div class="code-block animated" style="margin-top:14px;font-size:13px">
+          student = {<span class="st">"name"</span>: <span class="st">"Alice"</span>, <span class="st">"age"</span>: <span class="nm">21</span>, <span class="st">"score"</span>: <span class="nm">92.5</span>}<br>
+          <span class="fn">print</span>(student[<span class="st">"name"</span>])    <span class="cm"># Alice</span><br>
+          student[<span class="st">"grade"</span>] = <span class="st">"A"</span>    <span class="cm"># add new key</span><br>
+          <span class="fn">print</span>(student.keys())    <span class="cm"># dict_keys([name, age, score, grade])</span>
+        </div>
+      </div>
+      <div style="width:240px;display:flex;flex-direction:column;justify-content:center;gap:14px" class="animated">
+        <div class="card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div class="card-title" style="color:var(--blue)">List = Array-like</div>
+          <div style="font-size:13px;color:var(--ink-light)">→ Becomes a <strong>NumPy array</strong><br>→ Becomes a <strong>Pandas Series</strong></div>
+        </div>
+        <div class="card" style="background:var(--teal-light);border-color:#5eead4">
+          <div class="card-title" style="color:var(--teal)">Dict = Table-like</div>
+          <div style="font-size:13px;color:var(--ink-light)">→ Becomes a <strong>Pandas DataFrame</strong></div>
+        </div>
+        <div class="card" style="background:var(--amber-light);border-color:#fcd34d">
+          <div class="card-title" style="color:var(--amber)">Key Shortcut</div>
+          <div style="font-family:'JetBrains Mono';font-size:12px;color:var(--ink)">
+            Ctrl + / = comment<br>
+            Shift + Enter = run<br>
+            Ctrl + M B = new cell
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 10 – LOOPS ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">10 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:62.5%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Python Basics · Part 3</div>
+      <h2 class="section-title animated">Loops & <em>Conditions</em></h2>
+      <div class="grid-2 animated" style="gap:20px">
+        <div>
+          <div class="highlight-box" style="margin-bottom:14px"><strong>for loop</strong> — repeat over a collection</div>
+          <div class="code-block" style="font-size:13px">
+            scores = [<span class="nm">88</span>, <span class="nm">45</span>, <span class="nm">92</span>, <span class="nm">34</span>, <span class="nm">77</span>]<br><br>
+            <span class="kw">for</span> score <span class="kw">in</span> scores:<br>
+            &nbsp;&nbsp;<span class="kw">if</span> score &gt;= <span class="nm">60</span>:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="st">f"{score} → ✅ Pass"</span>)<br>
+            &nbsp;&nbsp;<span class="kw">else</span>:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="fn">print</span>(<span class="st">f"{score} → ❌ Fail"</span>)<br><br>
+            <span class="cm"># 88 → ✅ Pass</span><br>
+            <span class="cm"># 45 → ❌ Fail  ...</span>
+          </div>
+        </div>
+        <div>
+          <div class="highlight-box teal" style="margin-bottom:14px"><strong>List Comprehension</strong> — Pythonic one-liner loops</div>
+          <div class="code-block" style="font-size:13px">
+            <span class="cm"># Traditional loop</span><br>
+            passing = []<br>
+            <span class="kw">for</span> s <span class="kw">in</span> scores:<br>
+            &nbsp;&nbsp;<span class="kw">if</span> s >= <span class="nm">60</span>: passing.append(s)<br><br>
+            <span class="cm"># List comprehension — same result!</span><br>
+            passing = [s <span class="kw">for</span> s <span class="kw">in</span> scores <span class="kw">if</span> s >= <span class="nm">60</span>]<br><br>
+            <span class="cm"># Squaring each score</span><br>
+            squared = [s**<span class="nm">2</span> <span class="kw">for</span> s <span class="kw">in</span> scores]
+          </div>
+          <div class="highlight-box amber" style="margin-top:14px">
+            <strong>Pro tip:</strong> In data science, you'll mostly use NumPy vectorised operations instead of loops — much faster!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 11 – FUNCTIONS ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">11 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:68.75%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1">
+        <div class="eyebrow animated">Python Basics · Part 4</div>
+        <h2 class="section-title animated">Writing <em>Functions</em></h2>
+        <p class="body-text animated" style="margin-bottom:18px">Functions let you package reusable logic. In data science, you'll write functions to clean columns, transform features, and process entire datasets.</p>
+        <div class="code-block animated" style="font-size:13px">
+          <span class="cm"># Basic function</span><br>
+          <span class="kw">def</span> <span class="fn">greet</span>(name):<br>
+          &nbsp;&nbsp;<span class="kw">return</span> <span class="st">f"Hello, {name}! Welcome to Data Science."</span><br><br>
+          <span class="fn">print</span>(<span class="fn">greet</span>(<span class="st">"Devansh"</span>))<br><br>
+          <span class="cm"># Data science function with default argument</span><br>
+          <span class="kw">def</span> <span class="fn">calculate_grade</span>(score, passing_mark=<span class="nm">60</span>):<br>
+          &nbsp;&nbsp;<span class="kw">if</span> score >= <span class="nm">90</span>:  <span class="kw">return</span> <span class="st">"A"</span><br>
+          &nbsp;&nbsp;<span class="kw">elif</span> score >= <span class="nm">75</span>: <span class="kw">return</span> <span class="st">"B"</span><br>
+          &nbsp;&nbsp;<span class="kw">elif</span> score >= passing_mark: <span class="kw">return</span> <span class="st">"C"</span><br>
+          &nbsp;&nbsp;<span class="kw">else</span>: <span class="kw">return</span> <span class="st">"F"</span><br><br>
+          scores = [<span class="nm">88</span>, <span class="nm">92</span>, <span class="nm">45</span>, <span class="nm">67</span>]<br>
+          grades = [<span class="fn">calculate_grade</span>(s) <span class="kw">for</span> s <span class="kw">in</span> scores]<br>
+          <span class="fn">print</span>(grades)   <span class="cm"># ['B', 'A', 'F', 'C']</span>
+        </div>
+      </div>
+      <div style="width:260px;display:flex;flex-direction:column;justify-content:center;gap:14px" class="animated">
+        <div class="card">
+          <div class="card-title" style="color:var(--blue)">Anatomy of a Function</div>
+          <div style="font-size:13px;color:var(--ink-light);line-height:2">
+            🔑 <code style="font-family:'JetBrains Mono'">def</code> keyword<br>
+            📝 Function name<br>
+            📥 Parameters (inputs)<br>
+            ⚙️ Body (logic)<br>
+            📤 <code style="font-family:'JetBrains Mono'">return</code> value
+          </div>
+        </div>
+        <div class="card" style="background:var(--purple-light);border-color:#c4b5fd">
+          <div class="card-title" style="color:var(--purple)">Lambda Functions</div>
+          <div class="code-block" style="font-size:11px;margin-top:8px;padding:12px">
+            <span class="cm"># One-line function</span><br>
+            double = <span class="kw">lambda</span> x: x * <span class="nm">2</span><br>
+            <span class="fn">print</span>(double(<span class="nm">5</span>))  <span class="cm"># 10</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:8px">You'll use this a lot with Pandas .apply()</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 12 – THE 4 IMPORTS ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">12 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Module 0 · Final Section</div>
+      <h2 class="section-title animated">The <em>4 Essential Imports</em> — your data science starter kit</h2>
+      <div class="code-block animated" style="margin-bottom:24px;font-size:15px">
+        <span class="kw">import</span> numpy <span class="kw">as</span> <span class="nm">np</span><br>
+        <span class="kw">import</span> pandas <span class="kw">as</span> <span class="nm">pd</span><br>
+        <span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> <span class="nm">plt</span><br>
+        <span class="kw">import</span> seaborn <span class="kw">as</span> <span class="nm">sns</span>
+      </div>
+      <div class="grid-2 animated" style="gap:16px">
+        <div class="import-card" style="border-color:var(--blue-mid);background:var(--blue-light)">
+          <div class="import-emoji">🔢</div>
+          <div><div class="import-alias" style="color:var(--blue)">np</div><div class="import-full" style="color:var(--muted)">numpy</div><div class="import-desc">The backbone of all numerical computing in Python. Arrays, maths, random — everything fast.</div></div>
+        </div>
+        <div class="import-card" style="border-color:#5eead4;background:var(--teal-light)">
+          <div class="import-emoji">🐼</div>
+          <div><div class="import-alias" style="color:var(--teal)">pd</div><div class="import-full" style="color:var(--muted)">pandas</div><div class="import-desc">Your spreadsheet in Python. Load, filter, group, merge, and transform any tabular data.</div></div>
+        </div>
+        <div class="import-card" style="border-color:#fcd34d;background:var(--amber-light)">
+          <div class="import-emoji">📈</div>
+          <div><div class="import-alias" style="color:var(--amber)">plt</div><div class="import-full" style="color:var(--muted)">matplotlib.pyplot</div><div class="import-desc">The original Python charting library. Full control over every element of your plot.</div></div>
+        </div>
+        <div class="import-card" style="border-color:#c4b5fd;background:var(--purple-light)">
+          <div class="import-emoji">🎨</div>
+          <div><div class="import-alias" style="color:var(--purple)">sns</div><div class="import-full" style="color:var(--muted)">seaborn</div><div class="import-desc">Statistical visualisation built on Matplotlib. Beautiful charts with one line of code.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 13 – LIVE DEMO PLACEHOLDER ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">13 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:81.25%"></div></div>
+    <div class="slide-body center">
+      <div style="max-width:600px">
+        <div style="font-size:64px;margin-bottom:24px" class="animated">💻</div>
+        <div class="eyebrow animated" style="justify-content:center">Switching to Google Colab</div>
+        <h2 class="section-title animated" style="text-align:center">Live <em>Coding Demo</em></h2>
+        <p class="lead animated" style="text-align:center;margin:0 auto 28px">We'll now switch to Google Colab and run everything we just learned — variables, lists, dictionaries, loops, functions, and our first imports — all live.</p>
+        <div class="grid-3 animated" style="gap:12px">
+          <div class="chip blue" style="justify-content:center;padding:12px">Variables & Types</div>
+          <div class="chip teal" style="justify-content:center;padding:12px">Lists & Dicts</div>
+          <div class="chip purple" style="justify-content:center;padding:12px">Loops & Functions</div>
+          <div class="chip amber" style="justify-content:center;padding:12px">numpy as np</div>
+          <div class="chip green" style="justify-content:center;padding:12px">pandas as pd</div>
+          <div class="chip red" style="justify-content:center;padding:12px">First DataFrame</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 14 – MODULE 1 PREVIEW ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">14 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:87.5%"></div></div>
+    <div class="slide-body split">
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+        <div class="eyebrow animated">Coming Up Next</div>
+        <h2 class="section-title animated">Module 1:<br><em>NumPy — The Engine</em></h2>
+        <p class="body-text animated" style="margin-bottom:20px">NumPy powers the entire Python data science stack. We go deep on arrays, broadcasting, slicing, and why NumPy is 100x faster than regular Python lists.</p>
+        <div class="check-list animated">
+          <div class="check-item"><div class="check-icon">⚡</div><div class="check-text">Speed demo — Python list vs NumPy (you'll be shocked)</div></div>
+          <div class="check-item"><div class="check-icon">🔢</div><div class="check-text">N-dimensional arrays — 1D, 2D, 3D</div></div>
+          <div class="check-item"><div class="check-icon">📡</div><div class="check-text">Broadcasting — math on arrays of different shapes</div></div>
+          <div class="check-item"><div class="check-icon">🎲</div><div class="check-text">Random module — simulate real data for practice</div></div>
+        </div>
+      </div>
+      <div style="width:260px;display:flex;flex-direction:column;justify-content:center;gap:16px" class="animated">
+        <div class="card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div style="font-family:'JetBrains Mono';font-size:13px;color:var(--ink);line-height:2">
+            <span style="color:#7c3aed">import</span> numpy <span style="color:#7c3aed">as</span> <span style="color:#d97706">np</span><br><br>
+            arr = np.array([1,2,3,4,5])<br>
+            arr * 2<br>
+            <span style="color:#059669"># [2, 4, 6, 8, 10]</span><br><br>
+            <span style="color:#6c7086">← One line. No loop.</span>
+          </div>
+        </div>
+        <div class="card" style="background:var(--green-light);border-color:#86efac;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:4px">Your Homework 📝</div>
+          <div style="font-size:13px;color:var(--ink-light)">Run today's Colab notebook. Try changing the values and re-running each cell.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 15 – RESOURCES ══════════════ -->
+  <div class="slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">15 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:93.75%"></div></div>
+    <div class="slide-body">
+      <div class="eyebrow animated">Module 0 Resources</div>
+      <h2 class="section-title animated">Everything you need to <em>go deeper</em></h2>
+      <div class="grid-3 animated" style="gap:16px">
+        <div class="card">
+          <div style="font-size:24px;margin-bottom:10px">☁️</div>
+          <div class="card-title" style="color:var(--blue)">Google Colab</div>
+          <div class="body-text">colab.research.google.com<br><br>Free, no install. Start here.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:24px;margin-bottom:10px">🐍</div>
+          <div class="card-title" style="color:var(--teal)">Python Docs</div>
+          <div class="body-text">docs.python.org/3/<br><br>Official reference for all built-in functions.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:24px;margin-bottom:10px">🎓</div>
+          <div class="card-title" style="color:var(--purple)">Kaggle Learn</div>
+          <div class="body-text">kaggle.com/learn/python<br><br>Free interactive Python micro-course.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:24px;margin-bottom:10px">📺</div>
+          <div class="card-title" style="color:var(--amber)">Corey Schafer</div>
+          <div class="body-text">YouTube: Python tutorials<br><br>Best beginner Python series on YouTube.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:24px;margin-bottom:10px">📓</div>
+          <div class="card-title" style="color:var(--green)">Today's Notebook</div>
+          <div class="body-text">Link in video description<br><br>All code from this video — ready to run.</div>
+        </div>
+        <div class="card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+          <div style="font-size:24px;margin-bottom:10px">⚡</div>
+          <div class="card-title" style="color:var(--blue)">HackSkill</div>
+          <div class="body-text">hackskill.in<br><br>Register for your free certificate today.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SLIDE 16 – THANK YOU ══════════════ -->
+  <div class="slide thanks-slide">
+    <div class="topbar">
+      <div class="topbar-brand">HackSkill <span>| Data Science Fundamentals</span></div>
+      <div class="slide-counter">16 / 16</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+    <div class="slide-body center">
+      <div style="max-width:620px">
+        <div style="font-size:72px;margin-bottom:20px" class="animated">🚀</div>
+        <div class="eyebrow animated" style="justify-content:center">Module 0 Complete</div>
+        <h1 class="slide-title animated" style="text-align:center">You're ready to start your<br><em>Data Science journey!</em></h1>
+        <p class="lead animated" style="text-align:center;max-width:500px;margin:0 auto 32px">See you in Module 1 — where we meet NumPy, the backbone of all numerical computing in Python.</p>
+        <div class="grid-3 animated" style="gap:12px;margin-bottom:28px">
+          <div class="chip blue" style="justify-content:center;padding:12px 16px;border-radius:12px">👍 Like the video</div>
+          <div class="chip teal" style="justify-content:center;padding:12px 16px;border-radius:12px">🔔 Subscribe</div>
+          <div class="chip green" style="justify-content:center;padding:12px 16px;border-radius:12px">🔗 Register free</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:24px;padding-top:24px;border-top:1px solid var(--border)" class="animated">
+          <div style="text-align:center">
+            <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--blue)">⚡ HackSkill</div>
+            <div style="font-size:12px;color:var(--muted)">hackskill.in</div>
+          </div>
+          <div style="width:1px;height:40px;background:var(--border)"></div>
+          <div style="text-align:center">
+            <div style="font-size:15px;font-weight:700;color:var(--ink)">Devansh Singh</div>
+            <div style="font-size:12px;color:var(--muted)">ML Engineer · Amazon ML Certified</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Nav buttons -->
+<div class="nav-controls">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">‹</button>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">›</button>
+</div>
+<div class="nav-hint">← → arrow keys to navigate</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function showSlide(n) {
+    slides[current].classList.remove('active');
+    current = (n + total) % total;
+    slides[current].classList.add('active');
+  }
+
+  function changeSlide(dir) { showSlide(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+</script>
+</body>
+</html>
